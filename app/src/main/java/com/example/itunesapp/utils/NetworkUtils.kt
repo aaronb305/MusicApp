@@ -16,12 +16,12 @@ class NetworkMonitor(
     private val networkRequest: NetworkRequest = NetworkRequest.Builder()
         .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
         .build(),
-    private val connectivityManager: ConnectivityManager =
-        context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private val connectivityManager: ConnectivityManager? =
+        context?.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
 ) : ConnectivityManager.NetworkCallback() {
 
     private fun isNetworkAvailable(): Boolean {
-        connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)?.let {
+        connectivityManager?.getNetworkCapabilities(connectivityManager.activeNetwork)?.let {
             if (it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
                 || it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                 return true
@@ -31,12 +31,12 @@ class NetworkMonitor(
     }
 
     fun registerNetworkMonitor() {
-        connectivityManager.registerNetworkCallback(networkRequest, this)
+        connectivityManager?.registerNetworkCallback(networkRequest, this)
         NetworkState.observeNetworkState.onNext(isNetworkAvailable())
     }
 
     fun unregisterNetworkMonitor() {
-        connectivityManager.unregisterNetworkCallback(this)
+        connectivityManager?.unregisterNetworkCallback(this)
         context = null
     }
 

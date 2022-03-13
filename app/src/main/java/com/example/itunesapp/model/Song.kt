@@ -1,10 +1,11 @@
 package com.example.itunesapp.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity
+@Entity(tableName = "song")
 data class Song(
     @PrimaryKey @SerializedName("trackId") val trackId: Int,
     @SerializedName("trackName") val songName: String,
@@ -13,5 +14,6 @@ data class Song(
     @SerializedName("artworkUrl100") val artworkURL: String,
     @SerializedName("trackPrice") val trackPrice: Double,
     @SerializedName("previewUrl") val previewUrl: String,
-    @SerializedName("primaryGenreName") val genre: String
+    @SerializedName("primaryGenreName") val primaryGenre: String,
+    @ColumnInfo(name = "mainGenre") val genre: String
 )
