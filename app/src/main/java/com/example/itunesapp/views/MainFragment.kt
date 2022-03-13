@@ -1,13 +1,19 @@
 package com.example.itunesapp.views
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.itunesapp.R
+import com.example.itunesapp.adapter.SongAdapter
+import com.example.itunesapp.databinding.FragmentMainBinding
 import com.example.itunesapp.model.Songs
+import com.example.itunesapp.presenter.SongPresenter
 import com.example.itunesapp.presenter.SongViewContract
+import com.example.itunesapp.utils.navigate
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,6 +30,20 @@ class MainFragment : Fragment(), SongViewContract{
     private var param1: String? = null
     private var param2: String? = null
 
+    private val binding by lazy {
+        FragmentMainBinding.inflate(layoutInflater)
+    }
+
+    private val songAdapter by lazy {
+        SongAdapter(onSongClicked = {
+            navigate(supportFragmentManager = requireActivity().supportFragmentManager, DetailsFragment.newInstance("", ""))
+        })
+    }
+
+    private val songPresenter by lazy {
+        SongPresenter(requireContext(), this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -36,8 +56,27 @@ class MainFragment : Fragment(), SongViewContract{
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false)
+
+        binding.myRecycler.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            adapter = songAdapter
+        }
+
+        songPresenter.checkNetwork()
+
+        return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        songPresenter.destroy()
     }
 
     override fun loadingSongs(isLoading: Boolean) {
@@ -49,7 +88,14 @@ class MainFragment : Fragment(), SongViewContract{
     }
 
     override fun songFailed(throwable: Throwable) {
-        TODO("Not yet implemented")
+        AlertDialog.Builder(requireContext())
+            .setTitle("AN ERROR HAS OCCURRED")
+            .setMessage(throwable.localizedMessage)
+            .setPositiveButton("DISMISS") { dialogInterface, i ->
+                dialogInterface.dismiss()
+            }
+            .create()
+            .show()
     }
 
     companion object {

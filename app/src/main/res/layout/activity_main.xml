@@ -6,9 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <fragment
-        android:id="@+id/ItunesFragment"
-        android:name="com.example.itunesapp.views.FirstFragment"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/mainFragContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
