@@ -6,23 +6,20 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import io.reactivex.subjects.BehaviorSubject
+import javax.inject.Inject
 
 object NetworkState {
     val observeNetworkState: BehaviorSubject<Boolean> =
         BehaviorSubject.createDefault(false)
 }
 
-class NetworkMonitor(
-    private var context: Context?,
-    private val networkRequest: NetworkRequest = NetworkRequest.Builder()
-        .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-        .build(),
-    private val connectivityManager: ConnectivityManager? =
-        context?.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+class NetworkMonitor @Inject constructor(
+    private val networkRequest: NetworkRequest,
+    private val connectivityManager: ConnectivityManager
 ) : ConnectivityManager.NetworkCallback() {
 
     private fun isNetworkAvailable(): Boolean {
-        connectivityManager?.getNetworkCapabilities(connectivityManager.activeNetwork)?.let {
+        connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)?.let {
             if (it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
                 || it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                 return true
@@ -32,13 +29,12 @@ class NetworkMonitor(
     }
 
     fun registerNetworkMonitor() {
-        connectivityManager?.registerNetworkCallback(networkRequest, this)
+        connectivityManager.registerNetworkCallback(networkRequest, this)
         NetworkState.observeNetworkState.onNext(isNetworkAvailable())
     }
 
     fun unregisterNetworkMonitor() {
-        connectivityManager?.unregisterNetworkCallback(this)
-        context = null
+        connectivityManager.unregisterNetworkCallback(this)
     }
 
     override fun onAvailable(network: Network) {

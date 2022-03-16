@@ -6,7 +6,7 @@ import com.example.itunesapp.R
 
 fun navigate(supportFragmentManager: FragmentManager, fragment: Fragment) {
     supportFragmentManager.beginTransaction()
-        .replace(R.id.mainFragContainer, fragment)
+        .replace(R.id.songNavigationContainer, fragment)
         .addToBackStack(fragment.id.toString())
         .commit()
 }

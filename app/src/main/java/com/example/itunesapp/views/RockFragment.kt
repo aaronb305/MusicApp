@@ -6,9 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.itunesapp.R
-import com.example.itunesapp.model.Song
 
-class DetailsFragment : Fragment() {
+class RockFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,13 +20,12 @@ class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_details, container, false)
+        return inflater.inflate(R.layout.fragment_rock, container, false)
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(song: Song) =
-            DetailsFragment().apply {
+        fun newInstance() = RockFragment().apply {
                 arguments = Bundle().apply {
                 }
             }

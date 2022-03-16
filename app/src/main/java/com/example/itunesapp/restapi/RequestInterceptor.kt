@@ -5,6 +5,7 @@ import okhttp3.Response
 
 class RequestInterceptor : Interceptor{
     override fun intercept(chain: Interceptor.Chain): Response {
-        TODO("Not yet implemented")
+        val request = chain.request()
+        return chain.proceed(request)
     }
 }

@@ -7,19 +7,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.itunesapp.ItunesApp
 import com.example.itunesapp.R
 import com.example.itunesapp.adapter.SongAdapter
-import com.example.itunesapp.databinding.FragmentMainBinding
+import com.example.itunesapp.databinding.FragmentClassicBinding
 import com.example.itunesapp.model.Song
 import com.example.itunesapp.model.Songs
 import com.example.itunesapp.presenter.SongPresenterClassical
-import com.example.itunesapp.presenter.SongViewContract
+import com.example.itunesapp.presenter.SongViewContractClassical
 import com.example.itunesapp.utils.navigate
 import com.google.android.material.tabs.TabLayout
+import javax.inject.Inject
 
-class ClassicFragment : Fragment(), SongViewContract{
+class ClassicFragment : Fragment(), SongViewContractClassical{
+
+    @Inject
+    lateinit var songPresenterClassical: SongPresenterClassical
+
     private val binding by lazy {
-        FragmentMainBinding.inflate(layoutInflater)
+        FragmentClassicBinding.inflate(layoutInflater)
     }
 
     private val songAdapter by lazy {
@@ -29,12 +35,11 @@ class ClassicFragment : Fragment(), SongViewContract{
         })
     }
 
-    private val songPresenterClassical by lazy {
-//        SongPresenterClassical(requireContext(), )
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        ItunesApp.songComponent.inject(this)
+
         arguments?.let {
         }
     }
@@ -44,20 +49,14 @@ class ClassicFragment : Fragment(), SongViewContract{
         savedInstanceState: Bundle?
     ): View? {
 
+        songPresenterClassical.initializePresenter(this)
         binding.myRecycler.apply {
             layoutManager = LinearLayoutManager(
                     requireContext(), LinearLayoutManager.VERTICAL, false)
             adapter = songAdapter
         }
 
-        binding.tabs.addTab(binding.tabs.newTab()
-            .setIcon(R.drawable.ic_baseline_home).setText("Classic"))
-        binding.tabs.addTab(binding.tabs.newTab()
-            .setIcon(R.drawable.ic_baseline_mic).setText("Pop"))
-        binding.tabs.addTab(binding.tabs.newTab()
-            .setIcon(R.drawable.ic_baseline_music_note).setText("Rock"))
-
-//        songPresenterClassical.checkNetwork()
+        songPresenterClassical.checkNetwork()
 
         return binding.root
     }
@@ -65,13 +64,13 @@ class ClassicFragment : Fragment(), SongViewContract{
     override fun onResume() {
         super.onResume()
 
-//        songPresenterClassical.getClassicSongs()
+        songPresenterClassical.getClassicSongs()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
 
-//        songPresenterClassical.destroy()
+        songPresenterClassical.destroy()
     }
 
     override fun loadingSongs(isLoading: Boolean) {
@@ -101,8 +100,7 @@ class ClassicFragment : Fragment(), SongViewContract{
 
     companion object {
         @JvmStatic
-        fun newInstance() =
-            ClassicFragment().apply {
+        fun newInstance() = ClassicFragment().apply {
                 arguments = Bundle().apply {
                 }
             }

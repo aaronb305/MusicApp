@@ -2,28 +2,33 @@ package com.example.itunesapp.presenter
 
 import android.content.Context
 import android.util.Log
+import com.example.itunesapp.model.Songs
 import com.example.itunesapp.restapi.SongRepository
 import com.example.itunesapp.utils.NetworkMonitor
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class SongPresenterClassical @Inject constructor(
-    private var context: Context?,
     private val songRepository: SongRepository,
-    private var networkMonitor: NetworkMonitor, // = NetworkMonitor(context),
+    private val networkMonitor: NetworkMonitor, // = NetworkMonitor(context),
     private val disposable: CompositeDisposable // = CompositeDisposable()
 ) : SongPresenterClassicalContract{
 
-    private var songViewContract: SongViewContract? = null
+    private var songViewContract: SongViewContractClassical? = null
 
-    override fun initializePresenter(viewContract: SongViewContract) {
+    override fun initializePresenter(viewContract: SongViewContractClassical) {
         songViewContract = viewContract
     }
 
     override fun getClassicSongs() {
         songViewContract?.loadingSongs(true)
 
-        songRepository.getClassicalSongs().subscribe(
+        songRepository.getClassicalSongs()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
             { songs -> songViewContract?.songSuccess(songs)
 //                viewContract?.songFailed(Throwable("ERROR NO INTERNET"))
             },
@@ -36,7 +41,6 @@ class SongPresenterClassical @Inject constructor(
 
     override fun destroy() {
         networkMonitor.unregisterNetworkMonitor()
-        context = null
         songViewContract = null
         disposable.dispose()
     }
@@ -56,4 +60,16 @@ class SongPresenterClassical @Inject constructor(
 //                disposable.add(this)
 //            }
 //    }
+}
+interface SongPresenterClassicalContract {
+    fun initializePresenter(viewContract: SongViewContractClassical)
+    fun getClassicSongs()
+    fun destroy()
+    fun checkNetwork()
+}
+
+interface SongViewContractClassical {
+    fun loadingSongs(isLoading: Boolean)
+    fun songSuccess(songs: Songs)
+    fun songFailed(throwable: Throwable)
 }
