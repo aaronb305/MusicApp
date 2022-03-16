@@ -1,5 +1,6 @@
 package com.example.itunesapp.presenter
 
+import android.util.Log
 import com.example.itunesapp.model.Songs
 import com.example.itunesapp.restapi.SongRepository
 import com.example.itunesapp.utils.NetworkMonitor
@@ -20,6 +21,7 @@ class SongPresenterPop @Inject constructor(
 
     override fun getPopSongs() {
         // no-op
+        Log.d("****", "get pop songs called")
     }
 
     override fun destroy() {

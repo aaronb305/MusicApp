@@ -1,5 +1,6 @@
 package com.example.itunesapp.presenter
 
+import android.util.Log
 import com.example.itunesapp.model.Songs
 import com.example.itunesapp.restapi.SongRepository
 import com.example.itunesapp.utils.NetworkMonitor
@@ -19,6 +20,7 @@ class SongPresenterRock(
 
     override fun getRockSongs() {
         // no-op
+        Log.d("****", "get rock songs called")
     }
 
     override fun destroy() {

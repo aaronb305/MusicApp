@@ -1,11 +1,14 @@
 package com.example.itunesapp.views
 
 import android.app.AlertDialog
+import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.itunesapp.ItunesApp
 import com.example.itunesapp.R
@@ -15,7 +18,7 @@ import com.example.itunesapp.model.Song
 import com.example.itunesapp.model.Songs
 import com.example.itunesapp.presenter.SongPresenterClassical
 import com.example.itunesapp.presenter.SongViewContractClassical
-import com.example.itunesapp.utils.navigate
+import com.example.itunesapp.utils.playContentUri
 import com.google.android.material.tabs.TabLayout
 import javax.inject.Inject
 
@@ -30,8 +33,8 @@ class ClassicFragment : Fragment(), SongViewContractClassical{
 
     private val songAdapter by lazy {
         SongAdapter(onSongClicked = {
-            navigate(supportFragmentManager =
-            requireActivity().supportFragmentManager, DetailsFragment.newInstance(it))
+//            findNavController().navigateUp()
+            playContentUri(requireContext(), Uri.parse(it.previewUrl))
         })
     }
 
@@ -65,6 +68,9 @@ class ClassicFragment : Fragment(), SongViewContractClassical{
         super.onResume()
 
         songPresenterClassical.getClassicSongs()
+        binding.swipeToRefresh.setOnRefreshListener {
+//            songPresenterClassical.getClassicSongs()
+        }
     }
 
     override fun onDestroyView() {

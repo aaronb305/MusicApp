@@ -70,5 +70,7 @@ data class Song(
     @SerializedName("trackViewUrl")
     val trackViewUrl: String,
     @SerializedName("wrapperType")
-    val wrapperType: String
+    val wrapperType: String,
+    @ColumnInfo(name = "mainGenre")
+    val genre: String
 )

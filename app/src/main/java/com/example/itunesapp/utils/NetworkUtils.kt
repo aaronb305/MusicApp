@@ -18,6 +18,8 @@ class NetworkMonitor @Inject constructor(
     private val connectivityManager: ConnectivityManager
 ) : ConnectivityManager.NetworkCallback() {
 
+    val networkState: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(isNetworkAvailable())
+
     private fun isNetworkAvailable(): Boolean {
         connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)?.let {
             if (it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
@@ -39,11 +41,11 @@ class NetworkMonitor @Inject constructor(
 
     override fun onAvailable(network: Network) {
         super.onAvailable(network)
-        NetworkState.observeNetworkState.onNext(true)
+        networkState.onNext(true)
     }
 
     override fun onLost(network: Network) {
         super.onLost(network)
-        NetworkState.observeNetworkState.onNext(false)
+        networkState.onNext(false)
     }
 }

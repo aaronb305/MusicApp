@@ -11,8 +11,8 @@ interface SongDao {
     @Query("SELECT * FROM song")
     fun getAll() : Single<List<Song>>
 
-//    @Query("SELECT * FROM song WHERE mainGenre LIKE (:genre)")
-//    fun getAllByGenre(genre: String) : Single<Songs>
+    @Query("SELECT * FROM song WHERE mainGenre LIKE (:genre)")
+    fun getAllByGenre(genre: String) : Single<List<Song>>
 
     @Insert
     fun insertSong(song: Song) : Completable

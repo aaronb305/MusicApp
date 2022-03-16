@@ -5,6 +5,7 @@ import android.util.Log
 import com.example.itunesapp.model.Songs
 import com.example.itunesapp.restapi.SongRepository
 import com.example.itunesapp.utils.NetworkMonitor
+import com.example.itunesapp.utils.NetworkState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -25,18 +26,21 @@ class SongPresenterClassical @Inject constructor(
     override fun getClassicSongs() {
         songViewContract?.loadingSongs(true)
 
-        songRepository.getClassicalSongs()
+        networkMonitor.networkState
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-            { songs -> songViewContract?.songSuccess(songs)
-//                viewContract?.songFailed(Throwable("ERROR NO INTERNET"))
-            },
-            { error -> songViewContract?.songFailed(error)
-                Log.d("****", "throwable error")}
-        ).apply {
-            disposable.add(this)
-        }
+                { netstate -> if (netstate) {
+                    doNetworkCallClassical()
+                }
+                else {
+                    songViewContract?.songFailed(Throwable("ERROR NO INTERNET CONNECTION"))
+                }},
+                { songViewContract?.songFailed(it) }
+            )
+            .apply {
+                disposable.add(this)
+            }
     }
 
     override fun destroy() {
@@ -49,17 +53,17 @@ class SongPresenterClassical @Inject constructor(
         networkMonitor.registerNetworkMonitor()
     }
 
-//    private fun doNetworkCallClassical() {
-//        SongService.retrofitService.getClassicalSongs()
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe(
-//                { response -> viewContract?.songSuccess(response) },
-//                { error -> viewContract?.songFailed(error) }
-//            ).apply {
-//                disposable.add(this)
-//            }
-//    }
+    private fun doNetworkCallClassical() {
+        songRepository.getClassicalSongs()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { songs -> songViewContract?.songSuccess(songs) },
+                { error -> songViewContract?.songFailed(error) }
+            ).apply {
+                disposable.add(this)
+            }
+    }
 }
 interface SongPresenterClassicalContract {
     fun initializePresenter(viewContract: SongViewContractClassical)

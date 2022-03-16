@@ -16,21 +16,22 @@
             android:layout_height="100dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/songName"/>
 
         <TextView
             android:id="@+id/songName"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text = "SongName"
-            android:textStyle="bold"
             android:layout_marginStart="10dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/albumCover" />
+            android:text="SongName"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/albumCover"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/artistName"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
