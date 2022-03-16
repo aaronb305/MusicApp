@@ -8,7 +8,8 @@ import android.net.NetworkRequest
 import io.reactivex.subjects.BehaviorSubject
 
 object NetworkState {
-    val observeNetworkState: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+    val observeNetworkState: BehaviorSubject<Boolean> =
+        BehaviorSubject.createDefault(false)
 }
 
 class NetworkMonitor(

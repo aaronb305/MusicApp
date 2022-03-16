@@ -1,9 +1,6 @@
 package com.example.itunesapp.database
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.example.itunesapp.model.Song
 import com.example.itunesapp.model.Songs
 import io.reactivex.Completable
@@ -12,16 +9,16 @@ import io.reactivex.Single
 @Dao
 interface SongDao {
     @Query("SELECT * FROM song")
-    fun getAll() : Single<Songs>
+    fun getAll() : Single<List<Song>>
 
-    @Query("SELECT * FROM song WHERE mainGenre LIKE (:genre)")
-    fun getAllByGenre(genre: String) : Single<Songs>
+//    @Query("SELECT * FROM song WHERE mainGenre LIKE (:genre)")
+//    fun getAllByGenre(genre: String) : Single<Songs>
 
     @Insert
     fun insertSong(song: Song) : Completable
 
     @Insert
-    fun insertAll(songs: Songs) : Completable
+    fun insertAll(songs: List<Song>) : Completable
 
     @Delete
     fun deleteSong(song: Song) : Completable

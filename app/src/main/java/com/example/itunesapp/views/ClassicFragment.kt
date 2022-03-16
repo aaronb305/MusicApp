@@ -10,45 +10,32 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.itunesapp.R
 import com.example.itunesapp.adapter.SongAdapter
 import com.example.itunesapp.databinding.FragmentMainBinding
+import com.example.itunesapp.model.Song
 import com.example.itunesapp.model.Songs
-import com.example.itunesapp.presenter.SongPresenter
+import com.example.itunesapp.presenter.SongPresenterClassical
 import com.example.itunesapp.presenter.SongViewContract
 import com.example.itunesapp.utils.navigate
+import com.google.android.material.tabs.TabLayout
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MainFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class MainFragment : Fragment(), SongViewContract{
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
+class ClassicFragment : Fragment(), SongViewContract{
     private val binding by lazy {
         FragmentMainBinding.inflate(layoutInflater)
     }
 
     private val songAdapter by lazy {
         SongAdapter(onSongClicked = {
-            navigate(supportFragmentManager = requireActivity().supportFragmentManager, DetailsFragment.newInstance("", ""))
+            navigate(supportFragmentManager =
+            requireActivity().supportFragmentManager, DetailsFragment.newInstance(it))
         })
     }
 
-    private val songPresenter by lazy {
-        SongPresenter(requireContext(), this)
+    private val songPresenterClassical by lazy {
+//        SongPresenterClassical(requireContext(), )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
@@ -58,11 +45,19 @@ class MainFragment : Fragment(), SongViewContract{
     ): View? {
 
         binding.myRecycler.apply {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            layoutManager = LinearLayoutManager(
+                    requireContext(), LinearLayoutManager.VERTICAL, false)
             adapter = songAdapter
         }
 
-        songPresenter.checkNetwork()
+        binding.tabs.addTab(binding.tabs.newTab()
+            .setIcon(R.drawable.ic_baseline_home).setText("Classic"))
+        binding.tabs.addTab(binding.tabs.newTab()
+            .setIcon(R.drawable.ic_baseline_mic).setText("Pop"))
+        binding.tabs.addTab(binding.tabs.newTab()
+            .setIcon(R.drawable.ic_baseline_music_note).setText("Rock"))
+
+//        songPresenterClassical.checkNetwork()
 
         return binding.root
     }
@@ -70,24 +65,30 @@ class MainFragment : Fragment(), SongViewContract{
     override fun onResume() {
         super.onResume()
 
-
+//        songPresenterClassical.getClassicSongs()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
 
-        songPresenter.destroy()
+//        songPresenterClassical.destroy()
     }
 
     override fun loadingSongs(isLoading: Boolean) {
-        TODO("Not yet implemented")
+        binding.myRecycler.visibility = View.GONE
+        binding.loadingBar.visibility = View.VISIBLE
     }
 
     override fun songSuccess(songs: Songs) {
-        TODO("Not yet implemented")
+        binding.myRecycler.visibility = View.VISIBLE
+        binding.loadingBar.visibility = View.GONE
+        songAdapter.updateSongs(songs)
     }
 
     override fun songFailed(throwable: Throwable) {
+        binding.myRecycler.visibility = View.GONE
+        binding.loadingBar.visibility = View.GONE
+
         AlertDialog.Builder(requireContext())
             .setTitle("AN ERROR HAS OCCURRED")
             .setMessage(throwable.localizedMessage)
@@ -99,21 +100,10 @@ class MainFragment : Fragment(), SongViewContract{
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment FirstFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MainFragment().apply {
+        fun newInstance() =
+            ClassicFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
                 }
             }
     }

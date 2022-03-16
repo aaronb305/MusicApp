@@ -18,7 +18,7 @@ class SongAdapter(
 
     fun updateSongs(newSongs: Songs) {
         songs.clear()
-        songs.addAll(newSongs)
+        songs.addAll(newSongs.songs)
         notifyDataSetChanged()
     }
 
@@ -47,8 +47,9 @@ class SongViewHolder(
     private val albumCover : ImageView = itemView.findViewById(R.id.albumCover)
 
     fun bind(song: Song) {
-        songName.text = song.songName
-        songPrice.text = song.trackPrice.toString()
+        songName.text = song.trackName
+        val priceSong = song.trackPrice.toString()
+        songPrice.text = "\$$priceSong"
         artist.text = song.artistName
 
         itemView.setOnClickListener {
@@ -56,9 +57,9 @@ class SongViewHolder(
         }
 
         Picasso.get()
-            .load(song.artworkURL)
-            .placeholder(R.drawable.ic_launcher_background)
-            .error(R.drawable.ic_launcher_foreground)
+            .load(song.artworkUrl100)
+            .placeholder(R.drawable.ic_baseline_downloading)
+            .error(R.drawable.ic_baseline_error_outline)
             .fit()
             .into(albumCover)
     }

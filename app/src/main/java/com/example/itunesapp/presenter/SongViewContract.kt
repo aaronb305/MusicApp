@@ -1,5 +1,6 @@
 package com.example.itunesapp.presenter
 
+import com.example.itunesapp.model.Song
 import com.example.itunesapp.model.Songs
 
 interface SongViewContract {
