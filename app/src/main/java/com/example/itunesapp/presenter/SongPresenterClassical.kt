@@ -22,9 +22,9 @@ class SongPresenterClassical @Inject constructor(
     private val disposable: CompositeDisposable // = CompositeDisposable()
 ) : SongPresenterClassicalContract{
 
-    private var songViewContract: SongViewContractClassical? = null
+    private var songViewContract: SongViewContract? = null
 
-    override fun initializePresenter(viewContract: SongViewContractClassical) {
+    override fun initializePresenter(viewContract: SongViewContract) {
         songViewContract = viewContract
     }
 
@@ -41,11 +41,13 @@ class SongPresenterClassical @Inject constructor(
                     doNetworkCallClassical()
                 }
                 else {
-                    songViewContract?.songFailed(Throwable("ERROR NO INTERNET CONNECTION"))
+                    offlineLoadFromDatabase()
+//                    songViewContract?.songFailed(Throwable("ERROR NO INTERNET CONNECTION"))
                 }},
                 { error ->
                     offlineLoadFromDatabase()
-                    songViewContract?.songFailed(error) }
+//                    songViewContract?.songFailed(error)
+                  }
             )
             .apply {
                 disposable.add(this)
@@ -85,6 +87,7 @@ class SongPresenterClassical @Inject constructor(
         Log.d("Classic fragment", "entered insert songs")
         songs.forEach{
             it.genre = GENRE
+            removeEmptyFields(it)
         }
 
         databaseRepository.insertAll(songs)
@@ -130,18 +133,46 @@ class SongPresenterClassical @Inject constructor(
             }
     }
 
+    private fun removeEmptyFields(song: Song) : Song {
+        if (song.contentAdvisoryRating.isNullOrEmpty()) {
+            song.contentAdvisoryRating = ""
+        }
+        if (song.artworkUrl30.isNullOrEmpty()) {
+            song.artworkUrl30 = ""
+        }
+        if (song.kind.isNullOrEmpty()) {
+            song.kind = ""
+        }
+        if (song.trackCensoredName.isNullOrEmpty()) {
+            song.trackCensoredName = ""
+        }
+        if (song.trackExplicitness.isNullOrEmpty()) {
+            song.trackExplicitness = ""
+        }
+        if (song.trackName.isNullOrEmpty()) {
+            song.trackName = ""
+        }
+        if (song.trackViewUrl.isNullOrEmpty()) {
+            song.trackViewUrl = ""
+        }
+        if (song.artistViewUrl.isNullOrEmpty()) {
+            song.artistViewUrl = ""
+        }
+        return song
+    }
+
     companion object {
         const val GENRE = "classic"
     }
 }
 interface SongPresenterClassicalContract {
-    fun initializePresenter(viewContract: SongViewContractClassical)
+    fun initializePresenter(viewContract: SongViewContract)
     fun getClassicSongs()
     fun destroy()
     fun checkNetwork()
 }
 
-interface SongViewContractClassical {
+interface SongViewContract {
     fun offlineLoad(songs: List<Song>)
     fun loadingSongs(isLoading: Boolean)
     fun songSuccess(songs: List<Song>)

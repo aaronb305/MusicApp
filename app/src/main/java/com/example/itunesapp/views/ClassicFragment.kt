@@ -19,12 +19,12 @@ import com.example.itunesapp.databinding.FragmentClassicBinding
 import com.example.itunesapp.model.Song
 import com.example.itunesapp.model.Songs
 import com.example.itunesapp.presenter.SongPresenterClassical
-import com.example.itunesapp.presenter.SongViewContractClassical
+import com.example.itunesapp.presenter.SongViewContract
 import com.example.itunesapp.utils.playMusic
 import com.google.android.material.tabs.TabLayout
 import javax.inject.Inject
 
-class ClassicFragment() : Fragment(), SongViewContractClassical{
+class ClassicFragment() : Fragment(), SongViewContract {
 
     @Inject
     lateinit var songPresenterClassical: SongPresenterClassical

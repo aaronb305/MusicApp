@@ -11,11 +11,11 @@ data class Song(
     @SerializedName("artistName")
     val artistName: String,
     @SerializedName("artistViewUrl")
-    val artistViewUrl: String,
+    var artistViewUrl: String,
     @SerializedName("artworkUrl100")
     val artworkUrl100: String,
     @SerializedName("artworkUrl30")
-    val artworkUrl30: String,
+    var artworkUrl30: String,
     @SerializedName("artworkUrl60")
     val artworkUrl60: String,
     @SerializedName("collectionCensoredName")
@@ -31,7 +31,7 @@ data class Song(
     @SerializedName("collectionViewUrl")
     val collectionViewUrl: String,
     @SerializedName("contentAdvisoryRating")
-    val contentAdvisoryRating: String,
+    var contentAdvisoryRating: String,
     @SerializedName("country")
     val country: String,
     @SerializedName("currency")
@@ -43,7 +43,7 @@ data class Song(
     @SerializedName("isStreamable")
     val isStreamable: Boolean,
     @SerializedName("kind")
-    val kind: String,
+    var kind: String,
     @SerializedName("previewUrl")
     val previewUrl: String,
     @SerializedName("primaryGenreName")
@@ -51,16 +51,16 @@ data class Song(
     @SerializedName("releaseDate")
     val releaseDate: String,
     @SerializedName("trackCensoredName")
-    val trackCensoredName: String,
+    var trackCensoredName: String,
     @SerializedName("trackCount")
     val trackCount: Int,
     @SerializedName("trackExplicitness")
-    val trackExplicitness: String,
+    var trackExplicitness: String,
     @PrimaryKey
     @SerializedName("trackId")
     val trackId: Int,
     @SerializedName("trackName")
-    val trackName: String,
+    var trackName: String,
     @SerializedName("trackNumber")
     val trackNumber: Int,
     @SerializedName("trackPrice")
@@ -68,7 +68,7 @@ data class Song(
     @SerializedName("trackTimeMillis")
     val trackTimeMillis: Int,
     @SerializedName("trackViewUrl")
-    val trackViewUrl: String,
+    var trackViewUrl: String,
     @SerializedName("wrapperType")
     val wrapperType: String,
     @ColumnInfo(name = "mainGenre")

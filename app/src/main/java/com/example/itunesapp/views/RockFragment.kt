@@ -1,21 +1,54 @@
 package com.example.itunesapp.views
 
+import android.app.AlertDialog
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.itunesapp.ItunesApp
 import com.example.itunesapp.R
+import com.example.itunesapp.adapter.SongAdapter
+import com.example.itunesapp.databinding.FragmentClassicBinding
+import com.example.itunesapp.model.Song
+import com.example.itunesapp.presenter.SongPresenterClassical
+import com.example.itunesapp.presenter.SongPresenterRock
+import com.example.itunesapp.presenter.SongViewContract
+import javax.inject.Inject
 
-class RockFragment : Fragment() {
+class RockFragment : Fragment(), SongViewContract {
+
+    @Inject
+    lateinit var songPresenterRock: SongPresenterRock
+
+    private val player by lazy {
+        MediaPlayer()
+    }
+
+    private val binding by lazy {
+        FragmentClassicBinding.inflate(layoutInflater)
+    }
+
+    private val songAdapter by lazy {
+        SongAdapter(onSongClicked = {
+            player.stop()
+            player.reset()
+            player.setDataSource(it.previewUrl)
+            player.prepare()
+            player.start()
+//            player.stop()
+//            player.reset()
+//            playMusic(it)
+        })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         Log.d("rock Fragment", "on create rock fragment")
-        arguments?.let {
-        }
     }
 
     override fun onCreateView(
@@ -23,26 +56,78 @@ class RockFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        ItunesApp.songComponent.inject(this)
+
+        songPresenterRock.initializePresenter(this)
+
+        binding.myRecycler.apply {
+            layoutManager = LinearLayoutManager(
+                requireContext(), LinearLayoutManager.VERTICAL, false)
+            adapter = songAdapter
+        }
+
+        songPresenterRock.checkNetwork()
+
         Log.d("rock Fragment", "on create view rock fragment")
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_rock, container, false)
+        return binding.root
     }
 
     override fun onResume() {
         super.onResume()
 
         Log.d("rock Fragment", "on resume rock fragment")
+
+        songPresenterRock.getRockSongs()
+        binding.swipeToRefresh.setOnRefreshListener {
+            songPresenterRock.getRockSongs()
+            binding.swipeToRefresh.isRefreshing = true
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+
         Log.d("rock Fragment", "on destroy view rock fragment")
+
+        songPresenterRock.destroy()
     }
-    companion object {
-        @JvmStatic
-        fun newInstance() = RockFragment().apply {
-                arguments = Bundle().apply {
-                }
+
+    override fun offlineLoad(songs: List<Song>) {
+        binding.myRecycler.visibility = View.VISIBLE
+        binding.loadingBar.visibility = View.GONE
+        songAdapter.updateSongs(songs)
+        binding.swipeToRefresh.isRefreshing = false
+    }
+
+    override fun loadingSongs(isLoading: Boolean) {
+        binding.myRecycler.visibility = View.GONE
+        binding.loadingBar.visibility = View.VISIBLE
+    }
+
+    override fun songSuccess(songs: List<Song>) {
+        binding.myRecycler.visibility = View.VISIBLE
+        binding.loadingBar.visibility = View.GONE
+        songAdapter.updateSongs(songs)
+        binding.swipeToRefresh.isRefreshing = false
+    }
+
+    override fun songFailed(throwable: Throwable) {
+        binding.myRecycler.visibility = View.GONE
+        binding.loadingBar.visibility = View.GONE
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("AN ERROR HAS OCCURRED")
+            .setMessage(throwable.localizedMessage)
+            .setPositiveButton("DISMISS") { dialogInterface, i ->
+                dialogInterface.dismiss()
             }
+            .create()
+            .show()
+    }
+
+    companion object {
+        fun newInstance() =
+            RockFragment()
     }
 }
