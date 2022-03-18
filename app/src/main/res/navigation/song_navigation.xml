@@ -23,7 +23,7 @@
         android:id="@+id/rockFragment"
         android:label="Rock Fragment"
         tools:layout="@layout/fragment_rock"
-        android:name="com.example.itunesapp.views.PopFragment">
+        android:name="com.example.itunesapp.views.RockFragment">
     </fragment>
 
 </navigation>
