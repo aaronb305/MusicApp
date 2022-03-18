@@ -3,6 +3,8 @@ package com.example.itunesapp.di
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkRequest
+import com.example.itunesapp.database.DatabaseRepository
+import com.example.itunesapp.database.SongDao
 import com.example.itunesapp.presenter.SongPresenterClassical
 import com.example.itunesapp.restapi.SongRepository
 import com.example.itunesapp.utils.NetworkMonitor
@@ -24,10 +26,15 @@ class SongPresenterModule {
 
     @Provides
     fun providesSongPresenter(
+        databaseRepository: DatabaseRepository,
         songRepository: SongRepository,
         compositeDisposable: CompositeDisposable,
         networkMonitor: NetworkMonitor
     ) : SongPresenterClassical {
-        return SongPresenterClassical(songRepository, networkMonitor ,compositeDisposable)
+        return SongPresenterClassical(
+            databaseRepository,
+            songRepository,
+            networkMonitor,
+            compositeDisposable)
     }
 }

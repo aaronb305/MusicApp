@@ -9,7 +9,7 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/songNavigationBar"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         app:menu="@menu/song_menu"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
@@ -18,7 +18,7 @@
         android:id="@+id/songNavigationContainer"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="630dp"
+        android:layout_height="wrap_content"
         app:defaultNavHost="true"
         app:navGraph="@navigation/song_navigation"
         app:layout_constraintStart_toStartOf="parent"

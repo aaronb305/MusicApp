@@ -72,5 +72,5 @@ data class Song(
     @SerializedName("wrapperType")
     val wrapperType: String,
     @ColumnInfo(name = "mainGenre")
-    val genre: String
+    var genre: String
 )

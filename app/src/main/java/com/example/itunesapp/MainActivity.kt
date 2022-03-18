@@ -2,6 +2,9 @@ package com.example.itunesapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI.setupWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.itunesapp.databinding.ActivityMainBinding
 import com.example.itunesapp.views.ClassicFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -15,13 +18,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
+
+//        val navigationView = findNavController()
 
 //        val myOnNavigationItemClickListener =
 //            NavigationBarView.OnItemSelectedListener { item ->
-//                when (item.itemId) {
-//                    R.id.popTab
+//                if (item.itemId == R.id.classicTab) {
+//                    findNavController().navigate(R.id.classicFragment)
 //                }
-//            }
+//                else {  }
+//                }
+//       }
+
+        binding.songNavigationBar.apply {
+            setupWithNavController(findNavController(R.id.songNavigationContainer))
+        }
     }
 }

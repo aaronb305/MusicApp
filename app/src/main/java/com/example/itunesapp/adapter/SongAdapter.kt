@@ -16,9 +16,9 @@ class SongAdapter(
     private val onSongClicked: (Song) -> Unit
 ) : RecyclerView.Adapter<SongViewHolder>() {
 
-    fun updateSongs(newSongs: Songs) {
+    fun updateSongs(newSongs: List<Song>) {
         songs.clear()
-        songs.addAll(newSongs.songs)
+        songs.addAll(newSongs)
         notifyDataSetChanged()
     }
 

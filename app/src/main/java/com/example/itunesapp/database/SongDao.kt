@@ -1,8 +1,8 @@
 package com.example.itunesapp.database
 
 import androidx.room.*
+import androidx.room.OnConflictStrategy.REPLACE
 import com.example.itunesapp.model.Song
-import com.example.itunesapp.model.Songs
 import io.reactivex.Completable
 import io.reactivex.Single
 
@@ -14,10 +14,10 @@ interface SongDao {
     @Query("SELECT * FROM song WHERE mainGenre LIKE (:genre)")
     fun getAllByGenre(genre: String) : Single<List<Song>>
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     fun insertSong(song: Song) : Completable
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     fun insertAll(songs: List<Song>) : Completable
 
     @Delete

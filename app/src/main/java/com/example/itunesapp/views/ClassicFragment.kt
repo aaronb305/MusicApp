@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,19 +14,24 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.itunesapp.ItunesApp
 import com.example.itunesapp.R
 import com.example.itunesapp.adapter.SongAdapter
+import com.example.itunesapp.database.SongDatabase
 import com.example.itunesapp.databinding.FragmentClassicBinding
 import com.example.itunesapp.model.Song
 import com.example.itunesapp.model.Songs
 import com.example.itunesapp.presenter.SongPresenterClassical
 import com.example.itunesapp.presenter.SongViewContractClassical
-import com.example.itunesapp.utils.playContentUri
+import com.example.itunesapp.utils.playMusic
 import com.google.android.material.tabs.TabLayout
 import javax.inject.Inject
 
-class ClassicFragment : Fragment(), SongViewContractClassical{
+class ClassicFragment() : Fragment(), SongViewContractClassical{
 
     @Inject
     lateinit var songPresenterClassical: SongPresenterClassical
+
+    private val player by lazy {
+        MediaPlayer()
+    }
 
     private val binding by lazy {
         FragmentClassicBinding.inflate(layoutInflater)
@@ -33,18 +39,21 @@ class ClassicFragment : Fragment(), SongViewContractClassical{
 
     private val songAdapter by lazy {
         SongAdapter(onSongClicked = {
-//            findNavController().navigateUp()
-            playContentUri(requireContext(), Uri.parse(it.previewUrl))
+            player.stop()
+            player.reset()
+            player.setDataSource(it.previewUrl)
+            player.prepare()
+            player.start()
+//            player.stop()
+//            player.reset()
+//            playMusic(it)
         })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ItunesApp.songComponent.inject(this)
-
-        arguments?.let {
-        }
+        Log.d("Classic Fragment", "on create classic fragment")
     }
 
     override fun onCreateView(
@@ -52,10 +61,15 @@ class ClassicFragment : Fragment(), SongViewContractClassical{
         savedInstanceState: Bundle?
     ): View? {
 
+        Log.d("Classic Fragment", "on create view classic fragment")
+
+        ItunesApp.songComponent.inject(this)
+
         songPresenterClassical.initializePresenter(this)
+
         binding.myRecycler.apply {
             layoutManager = LinearLayoutManager(
-                    requireContext(), LinearLayoutManager.VERTICAL, false)
+                requireContext(), LinearLayoutManager.VERTICAL, false)
             adapter = songAdapter
         }
 
@@ -67,16 +81,28 @@ class ClassicFragment : Fragment(), SongViewContractClassical{
     override fun onResume() {
         super.onResume()
 
+        Log.d("Classic Fragment", "on resume classic fragment")
+
         songPresenterClassical.getClassicSongs()
         binding.swipeToRefresh.setOnRefreshListener {
-//            songPresenterClassical.getClassicSongs()
+            songPresenterClassical.getClassicSongs()
+            binding.swipeToRefresh.isRefreshing = true
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
 
+        Log.d("Classic Fragment", "on destroy view classic fragment")
+
         songPresenterClassical.destroy()
+    }
+
+    override fun offlineLoad(songs: List<Song>) {
+        binding.myRecycler.visibility = View.VISIBLE
+        binding.loadingBar.visibility = View.GONE
+        songAdapter.updateSongs(songs)
+        binding.swipeToRefresh.isRefreshing = false
     }
 
     override fun loadingSongs(isLoading: Boolean) {
@@ -84,10 +110,11 @@ class ClassicFragment : Fragment(), SongViewContractClassical{
         binding.loadingBar.visibility = View.VISIBLE
     }
 
-    override fun songSuccess(songs: Songs) {
+    override fun songSuccess(songs: List<Song>) {
         binding.myRecycler.visibility = View.VISIBLE
         binding.loadingBar.visibility = View.GONE
         songAdapter.updateSongs(songs)
+        binding.swipeToRefresh.isRefreshing = false
     }
 
     override fun songFailed(throwable: Throwable) {
@@ -105,10 +132,8 @@ class ClassicFragment : Fragment(), SongViewContractClassical{
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance() = ClassicFragment().apply {
-                arguments = Bundle().apply {
-                }
-            }
+        fun newInstance() =
+            ClassicFragment()
     }
 }
+
