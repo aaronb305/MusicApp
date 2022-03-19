@@ -6,6 +6,9 @@ import com.example.itunesapp.views.PopFragment
 import com.example.itunesapp.views.RockFragment
 import dagger.Component
 
+/**
+ * tells Dagger which classes are modules for dependency injection
+ */
 @Component (
     modules = [
         NetworkModule::class,

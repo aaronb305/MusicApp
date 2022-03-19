@@ -2,6 +2,7 @@ package com.example.itunesapp.presenter
 
 import android.util.Log
 import com.example.itunesapp.database.DatabaseRepository
+import com.example.itunesapp.database.SongDatabase
 import com.example.itunesapp.model.Song
 import com.example.itunesapp.model.Songs
 import com.example.itunesapp.restapi.SongRepository
@@ -10,6 +11,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
+/**
+ * communicates with [DatabaseRepository] and [SongRepository] to make network calls and check
+ * network status
+ */
 class SongPresenterRock(
     private val databaseRepository: DatabaseRepository,
     private val songRepository: SongRepository,
@@ -23,6 +28,9 @@ class SongPresenterRock(
         songViewContract = viewContract
     }
 
+    /**
+     * obtains classic songs from Api, or loads from database if offline
+     */
     override fun getRockSongs() {
         Log.d("rock fragment", "get rock songs called")
         songViewContract?.loadingSongs(true)
@@ -55,9 +63,16 @@ class SongPresenterRock(
         disposable.dispose()
     }
 
+    /**
+     * checks network status
+     */
     override fun checkNetwork() {
         networkMonitor.registerNetworkMonitor()
     }
+
+    /**
+     * communicates with api to obtain songs
+     */
     private fun doNetworkCallRock() {
         Log.d("rock fragment", "starting network call")
         songRepository.getRockSongs()
@@ -77,6 +92,9 @@ class SongPresenterRock(
             }
     }
 
+    /**
+     * adds songs from [doNetworkCallClassical] to [SongDatabase]
+     */
     private fun insertRockSongsToDatabase(songs: List<Song>) {
         Log.d("rock fragment", "entered insert songs")
         songs.forEach{
@@ -96,6 +114,9 @@ class SongPresenterRock(
             }
     }
 
+    /**
+     * retrieves songs from [SongDatabase] to populate recycle view
+     */
     private fun getRockSongsFromDatabase() {
         databaseRepository.getAllByGenre(GENRE)
             .subscribeOn(Schedulers.io())
@@ -112,6 +133,9 @@ class SongPresenterRock(
             }
     }
 
+    /**
+     * gets songs from [SongDatabase] to populate recycle view if offline
+     */
     private fun offlineLoadFromDatabase() {
         databaseRepository.getAllByGenre(GENRE)
             .subscribeOn(Schedulers.io())
@@ -127,6 +151,10 @@ class SongPresenterRock(
             }
     }
 
+    /**
+     * deals with nullable/blank fields in api for certain songs in order to populate
+     * recycle view
+     */
     private fun removeEmptyFields(song: Song) : Song {
         if (song.contentAdvisoryRating.isNullOrEmpty()) {
             song.contentAdvisoryRating = ""

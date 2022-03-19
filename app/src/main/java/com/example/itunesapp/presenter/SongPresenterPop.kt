@@ -2,6 +2,7 @@ package com.example.itunesapp.presenter
 
 import android.util.Log
 import com.example.itunesapp.database.DatabaseRepository
+import com.example.itunesapp.database.SongDatabase
 import com.example.itunesapp.model.Song
 import com.example.itunesapp.model.Songs
 import com.example.itunesapp.restapi.SongRepository
@@ -11,6 +12,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+/**
+ * communicates with [DatabaseRepository] and [SongRepository] to make network calls and check
+ * network status
+ */
 class SongPresenterPop @Inject constructor(
     private val databaseRepository: DatabaseRepository,
     private val songRepository: SongRepository,
@@ -24,6 +29,9 @@ class SongPresenterPop @Inject constructor(
         songViewContract = viewContract
     }
 
+    /**
+     * obtains classic songs from Api, or loads from database if offline
+     */
     override fun getPopSongs() {
         Log.d("pop fragment", "get pop songs called")
         songViewContract?.loadingSongs(true)
@@ -56,10 +64,16 @@ class SongPresenterPop @Inject constructor(
         disposable.dispose()
     }
 
+    /**
+     * checks network status
+     */
     override fun checkNetwork() {
         networkMonitor.registerNetworkMonitor()
     }
 
+    /**
+     * communicates with api to obtain songs
+     */
     private fun doNetworkCallPop() {
         Log.d("pop fragment", "starting network call")
         songRepository.getPopSongs()
@@ -80,6 +94,9 @@ class SongPresenterPop @Inject constructor(
             }
     }
 
+    /**
+     * adds songs from [doNetworkCallClassical] to [SongDatabase]
+     */
     private fun insertPopSongsToDatabase(songs: List<Song>) {
         Log.d("pop fragment", "entered insert songs")
         songs.forEach{
@@ -99,6 +116,9 @@ class SongPresenterPop @Inject constructor(
             }
     }
 
+    /**
+     * retrieves songs from [SongDatabase] to populate recycle view
+     */
     private fun getPopSongsFromDatabase() {
         databaseRepository.getAllByGenre(GENRE)
             .subscribeOn(Schedulers.io())
@@ -115,6 +135,9 @@ class SongPresenterPop @Inject constructor(
             }
     }
 
+    /**
+     * gets songs from [SongDatabase] to populate recycle view if offline
+     */
     private fun offlineLoadFromDatabase() {
         databaseRepository.getAllByGenre(GENRE)
             .subscribeOn(Schedulers.io())
@@ -130,6 +153,10 @@ class SongPresenterPop @Inject constructor(
             }
     }
 
+    /**
+     * deals with nullable/blank fields in api for certain songs in order to populate
+     * recycle view
+     */
     private fun removeEmptyFields(song: Song) : Song {
         if (song.contentAdvisoryRating.isNullOrEmpty()) {
             song.contentAdvisoryRating = ""

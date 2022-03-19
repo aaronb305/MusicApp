@@ -12,6 +12,9 @@ import com.example.itunesapp.database.SongDatabase
 import dagger.Module
 import dagger.Provides
 
+/**
+ * Dagger dependency injection used in [DatabaseRepository] and [NetworkMonitor]
+ */
 @Module
 class ApplicationModule(
     private val applicationContext: Context

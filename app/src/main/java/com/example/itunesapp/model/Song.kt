@@ -4,6 +4,9 @@ package com.example.itunesapp.model
 import androidx.room.*
 import com.google.gson.annotations.SerializedName
 
+/**
+ * creates data table in [SongDatabase] with corresponding fields
+ */
 @Entity
 data class Song(
     @SerializedName("artistId")

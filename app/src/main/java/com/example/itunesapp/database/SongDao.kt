@@ -6,6 +6,9 @@ import com.example.itunesapp.model.Song
 import io.reactivex.Completable
 import io.reactivex.Single
 
+/**
+ * interacts with [SongDatabase]
+ */
 @Dao
 interface SongDao {
     @Query("SELECT * FROM song")

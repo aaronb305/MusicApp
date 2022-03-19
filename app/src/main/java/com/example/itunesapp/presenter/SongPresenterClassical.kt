@@ -15,6 +15,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+/**
+ * communicates with [DatabaseRepository] and [SongRepository] to make network calls and check
+ * network status
+ */
 class SongPresenterClassical @Inject constructor(
     private val databaseRepository: DatabaseRepository,
     private val songRepository: SongRepository,
@@ -28,6 +32,9 @@ class SongPresenterClassical @Inject constructor(
         songViewContract = viewContract
     }
 
+    /**
+     * obtains classic songs from Api, or loads from database if offline
+     */
     override fun getClassicSongs() {
         Log.d("Classic fragment", "beginning get classic songs")
         songViewContract?.loadingSongs(true)
@@ -60,10 +67,16 @@ class SongPresenterClassical @Inject constructor(
         disposable.dispose()
     }
 
+    /**
+     * checks network status
+     */
     override fun checkNetwork() {
         networkMonitor.registerNetworkMonitor()
     }
 
+    /**
+     * communicates with api to obtain songs
+     */
     private fun doNetworkCallClassical() {
         Log.d("Classic fragment", "starting network call")
         songRepository.getClassicalSongs()
@@ -83,6 +96,9 @@ class SongPresenterClassical @Inject constructor(
             }
     }
 
+    /**
+     * adds songs from [doNetworkCallClassical] to [SongDatabase]
+     */
     private fun insertClassicSongsToDatabase(songs: List<Song>) {
         Log.d("Classic fragment", "entered insert songs")
         songs.forEach{
@@ -102,6 +118,9 @@ class SongPresenterClassical @Inject constructor(
             }
     }
 
+    /**
+     * retrieves songs from [SongDatabase] to populate recycle view
+     */
     private fun getClassicSongsFromDatabase() {
         databaseRepository.getAllByGenre(GENRE)
             .subscribeOn(Schedulers.io())
@@ -118,6 +137,9 @@ class SongPresenterClassical @Inject constructor(
             }
     }
 
+    /**
+     * gets songs from [SongDatabase] to populate recycle view if offline
+     */
     private fun offlineLoadFromDatabase() {
         databaseRepository.getAllByGenre(GENRE)
             .subscribeOn(Schedulers.io())
@@ -133,6 +155,10 @@ class SongPresenterClassical @Inject constructor(
             }
     }
 
+    /**
+     * deals with nullable/blank fields in api for certain songs in order to populate
+     * recycle view
+     */
     private fun removeEmptyFields(song: Song) : Song {
         if (song.contentAdvisoryRating.isNullOrEmpty()) {
             song.contentAdvisoryRating = ""

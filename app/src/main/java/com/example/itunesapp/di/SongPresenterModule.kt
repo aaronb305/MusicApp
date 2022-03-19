@@ -14,6 +14,9 @@ import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
 
+/**
+ * provides necessary components for each presenter to be injected by Dagger
+ */
 @Module
 class SongPresenterModule {
 

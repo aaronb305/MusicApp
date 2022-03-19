@@ -8,11 +8,18 @@ import android.net.NetworkRequest
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 
+/**
+ * used in [NetworkMonitor.registerNetworkMonitor] and [NetworkMonitor.unregisterNetworkMonitor]
+ * to see if network connection is available
+ */
 object NetworkState {
     val observeNetworkState: BehaviorSubject<Boolean> =
         BehaviorSubject.createDefault(false)
 }
 
+/**
+ * lets presenters know when internet connection is present and lost =
+ */
 class NetworkMonitor @Inject constructor(
     private val networkRequest: NetworkRequest,
     private val connectivityManager: ConnectivityManager

@@ -21,9 +21,15 @@ import javax.inject.Inject
 
 class PopFragment : Fragment(), SongViewContract{
 
+    /**
+     * injects presenter to be used
+     */
     @Inject
     lateinit var songPresenterPop: SongPresenterPop
 
+    /**
+     * initializes media player
+     */
     private val player by lazy {
         MediaPlayer()
     }
@@ -32,6 +38,9 @@ class PopFragment : Fragment(), SongViewContract{
         FragmentClassicBinding.inflate(layoutInflater)
     }
 
+    /**
+     * allows for preview of song to be played when clicked
+     */
     private val songAdapter by lazy {
         SongAdapter(onSongClicked = {
             player.stop()
@@ -51,6 +60,10 @@ class PopFragment : Fragment(), SongViewContract{
         Log.d("pop Fragment", "on create pop fragment")
     }
 
+    /**
+     * injects dependencies from [SongComponent], initializes [SongPresenterPop], and
+     * initializes [SongAdapter]
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,6 +86,9 @@ class PopFragment : Fragment(), SongViewContract{
         return binding.root
     }
 
+    /**
+     * retrieves songs from api via [SongPresenterPop] and sets up swipe to refresh
+     */
     override fun onResume() {
         super.onResume()
 
@@ -85,6 +101,9 @@ class PopFragment : Fragment(), SongViewContract{
         }
     }
 
+    /**
+     * destroys [SongPresenterPop]
+     */
     override fun onDestroyView() {
         super.onDestroyView()
 
@@ -93,6 +112,9 @@ class PopFragment : Fragment(), SongViewContract{
         songPresenterPop.destroy()
     }
 
+    /**
+     * loads songs when internet connections is absent
+     */
     override fun offlineLoad(songs: List<Song>) {
         binding.myRecycler.visibility = View.VISIBLE
         binding.loadingBar.visibility = View.GONE
@@ -100,11 +122,17 @@ class PopFragment : Fragment(), SongViewContract{
         binding.swipeToRefresh.isRefreshing = false
     }
 
+    /**
+     * shows loading bar while waiting for songs to be pulled
+     */
     override fun loadingSongs(isLoading: Boolean) {
         binding.myRecycler.visibility = View.GONE
         binding.loadingBar.visibility = View.VISIBLE
     }
 
+    /**
+     * adds songs to recycle view via [SongAdapter]
+     */
     override fun songSuccess(songs: List<Song>) {
         binding.myRecycler.visibility = View.VISIBLE
         binding.loadingBar.visibility = View.GONE
@@ -112,6 +140,9 @@ class PopFragment : Fragment(), SongViewContract{
         binding.swipeToRefresh.isRefreshing = false
     }
 
+    /**
+     * lets user know api call failed
+     */
     override fun songFailed(throwable: Throwable) {
         binding.myRecycler.visibility = View.GONE
         binding.loadingBar.visibility = View.GONE

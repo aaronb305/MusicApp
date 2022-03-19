@@ -25,10 +25,15 @@ import com.google.android.material.tabs.TabLayout
 import javax.inject.Inject
 
 class ClassicFragment() : Fragment(), SongViewContract {
-
+    /**
+     * injects presenter to be used
+     */
     @Inject
     lateinit var songPresenterClassical: SongPresenterClassical
 
+    /**
+     * initializes media player
+     */
     private val player by lazy {
         MediaPlayer()
     }
@@ -37,6 +42,9 @@ class ClassicFragment() : Fragment(), SongViewContract {
         FragmentClassicBinding.inflate(layoutInflater)
     }
 
+    /**
+     * allows for preview of song to be played when clicked
+     */
     private val songAdapter by lazy {
         SongAdapter(onSongClicked = {
             player.stop()
@@ -56,6 +64,10 @@ class ClassicFragment() : Fragment(), SongViewContract {
         Log.d("Classic Fragment", "on create classic fragment")
     }
 
+    /**
+     * injects dependencies from [SongComponent], initializes [SongPresenterClassical], and
+     * initializes [SongAdapter]
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -78,6 +90,9 @@ class ClassicFragment() : Fragment(), SongViewContract {
         return binding.root
     }
 
+    /**
+     * retrieves songs from api via [SongPresenterClassical] and sets up swipe to refresh
+     */
     override fun onResume() {
         super.onResume()
 
@@ -90,6 +105,9 @@ class ClassicFragment() : Fragment(), SongViewContract {
         }
     }
 
+    /**
+     * destroys [SongPresenterClassical]
+     */
     override fun onDestroyView() {
         super.onDestroyView()
 
@@ -98,6 +116,9 @@ class ClassicFragment() : Fragment(), SongViewContract {
         songPresenterClassical.destroy()
     }
 
+    /**
+     * loads songs when internet connections is absent
+     */
     override fun offlineLoad(songs: List<Song>) {
         binding.myRecycler.visibility = View.VISIBLE
         binding.loadingBar.visibility = View.GONE
@@ -105,11 +126,17 @@ class ClassicFragment() : Fragment(), SongViewContract {
         binding.swipeToRefresh.isRefreshing = false
     }
 
+    /**
+     * shows loading bar while waiting for songs to be pulled
+     */
     override fun loadingSongs(isLoading: Boolean) {
         binding.myRecycler.visibility = View.GONE
         binding.loadingBar.visibility = View.VISIBLE
     }
 
+    /**
+     * adds songs to recycle view via [SongAdapter]
+     */
     override fun songSuccess(songs: List<Song>) {
         binding.myRecycler.visibility = View.VISIBLE
         binding.loadingBar.visibility = View.GONE
@@ -117,6 +144,9 @@ class ClassicFragment() : Fragment(), SongViewContract {
         binding.swipeToRefresh.isRefreshing = false
     }
 
+    /**
+     * lets user know api call failed
+     */
     override fun songFailed(throwable: Throwable) {
         binding.myRecycler.visibility = View.GONE
         binding.loadingBar.visibility = View.GONE

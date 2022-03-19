@@ -5,6 +5,9 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
 
+/**
+ * abstraction layer for [SongDatabase], used for network calls
+ */
 interface DatabaseRepository {
     fun getAll() : Single<List<Song>>
     fun getAllByGenre(genre : String) : Single<List<Song>>
@@ -13,19 +16,19 @@ interface DatabaseRepository {
     fun deleteSong(song: Song) : Completable
 }
 
+/**
+ * abstraction layer for [DatabaseRepository]
+ */
 class DatabaseRepositoryImpl @Inject constructor(
     private val dao: SongDao
 ) : DatabaseRepository {
     override fun getAll(): Single<List<Song>> = dao.getAll()
 
-
     override fun getAllByGenre(genre : String): Single<List<Song>> =  dao.getAllByGenre(genre)
 
     override fun insertSong(song: Song): Completable = dao.insertSong(song)
 
-
     override fun insertAll(songs: List<Song>): Completable = dao.insertAll(songs)
-
 
     override fun deleteSong(song: Song): Completable = dao.deleteSong(song)
 }

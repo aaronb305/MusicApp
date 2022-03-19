@@ -6,6 +6,9 @@ import com.example.itunesapp.views.ClassicFragment
 import io.reactivex.Single
 import retrofit2.http.GET
 
+/**
+ * communicates with web api
+ */
 interface ItunesApi {
     @GET (POP_ENDPOINT)
     fun getPopSongs() : Single<Songs>
